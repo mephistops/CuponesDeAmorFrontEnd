@@ -1,6 +1,17 @@
 import { Cupon } from "./components/cupon";
+import cuponesService from "./services/cupones.service";
+import { useState, useEffect } from "preact/hooks";
+import ICuponData from "./types/cupon.type";
 
 export function App() {
+  const [coupons, setCoupons] = useState([]);
+
+  useEffect(() => {
+    cuponesService.getAll().then((response: any) => {
+      setCoupons(response.data);
+    });
+  }, []);
+
   return (
     <>
       <div className="row mt-5">
@@ -10,12 +21,17 @@ export function App() {
       </div>
 
       <div className="row">
-        <Cupon
-          code={1}
-          text="UN PICNIC EN LA PLAYA"
-          description="Una tarde junto a la playa, con comida casera"
-          icons={'bi bi-sun, bi bi-umbrella'}
-        />
+        {coupons && coupons.map((coupon) => {
+            return (
+              <Cupon
+                code={coupon['id']}
+                text={coupon['text']}
+                description={coupon['description']}
+                iconOne={coupon['iconOne']}
+                iconTwo={coupon['iconTwo']}
+              />
+            );
+          })}
       </div>
     </>
   );
